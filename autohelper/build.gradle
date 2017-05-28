@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "24.0.3"
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "com.a1101studio.autohelper"
@@ -22,8 +22,15 @@ android {
         }
     }
 }
+allprojects {
+    repositories {
+        jcenter()
+        maven { url 'https://github.com/yandexmobile/yandexmapkit-android/raw/maven/' }
+    }
+}
 
 dependencies {
+    compile 'ru.yandex:yandexmapkit:2.5.4@aar'
     compile fileTree(dir: 'libs', excludes: ["org.eclipse.paho.client.mqttv3-${rootProject.ext.clientVersion}.jar"], include: '*.jar')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -33,6 +40,7 @@ dependencies {
         //exclude module: "org.eclipse.paho.client.mqttv3"
         transitive = true
     }
+
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'

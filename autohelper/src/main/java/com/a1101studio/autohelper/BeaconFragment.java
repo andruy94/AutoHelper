@@ -7,6 +7,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+
+import ru.yandex.yandexmapkit.MapController;
+import ru.yandex.yandexmapkit.MapView;
+import ru.yandex.yandexmapkit.overlay.location.MyLocationItem;
+import ru.yandex.yandexmapkit.overlay.location.OnMyLocationListener;
+import ru.yandex.yandexmapkit.MapView;
 
 
 /**
@@ -26,6 +33,8 @@ public class BeaconFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    MapController mMapController;
+    LinearLayout mView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -58,6 +67,7 @@ public class BeaconFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
@@ -73,6 +83,24 @@ public class BeaconFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        View view = getView();
+        if(view != null) {
+            final MapView mapView = (MapView) getView().findViewById(R.id.map);
+            mapView.showBuiltInScreenButtons(true);
+
+            mMapController = mapView.getMapController();
+            // add listener
+            mMapController.getOverlayManager().getMyLocation();
+
+
+    }
+    }
+
 
     @Override
     public void onAttach(Context context) {
