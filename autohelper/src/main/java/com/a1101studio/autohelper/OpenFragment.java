@@ -4,7 +4,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -15,10 +16,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.a1101studio.autohelper.adapters.ConnectionModel;
 import com.a1101studio.autohelper.utils.ServerWorker;
 
-import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -107,7 +108,7 @@ public class OpenFragment extends Fragment {
 
     @OnClick(R.id.buttonOpen)
     public void openMe() {
-
+            connectToService();
         if (serverWorker.getMqttAndroidClient().isConnected()) {
             editText.setHint(editText.getText().toString());
 
@@ -115,9 +116,29 @@ public class OpenFragment extends Fragment {
             serverWorker.publishMessage(msgText);
             editText.setText("");
         } else {
+            try {
+                serverWorker.getMqttAndroidClient().disconnect();
+            } catch (MqttException|NullPointerException e) {
+                e.printStackTrace();
+            }
+            connectToService();
             Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void connectToService() {
+        if (serverWorker == null || !serverWorker.getMqttAndroidClient().isConnected()) {
+            ConnectionModel connectionModel = createConnectionModel(getContext());
+
+            serverWorker = new ServerWorker(getContext(),connectionModel , new ServerWorker.CallBackMessage() {
+                @Override
+                public void onMessageArrive(String s1, String s2) {
+                    msg += "{topic= " + s1 + "msg=" + s2 + '}' + '\n';
+                }
+            });
+        }
+    }
+
     @OnLongClick(R.id.buttonOpen)
     public boolean onLong(){
         AlertDialog.Builder builder=new AlertDialog.Builder(getActivity()).setMessage(msg).setPositiveButton(ok,null);
@@ -137,18 +158,32 @@ public class OpenFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
-        } else {
-            /*throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");*/
         }
-        if (serverWorker == null || serverWorker.getMqttAndroidClient().isConnected())
-            serverWorker = new ServerWorker(context, new ServerWorker.CallBackMessage() {
-                @Override
-                public void onMessageArrive(String s1, String s2) {
-                    //Toast.makeText(context,"topic="+s1+"msg="+s2,Toast.LENGTH_SHORT).show();
-                    msg+="{topic= "+s1+"msg=" +s2+'}'+'\n';
-                }
-            });
+
+
+    }
+
+    @NonNull
+    private ConnectionModel createConnectionModel(Context context) {
+        String serverUri = getStringFromPrefernce(context, context.getString(R.string.open_key_web_adress));
+        String subTopic = getStringFromPrefernce(context, context.getString(R.string.open_key_sub_topic));
+        String publishTopic = getStringFromPrefernce(context, context.getString(R.string.open_key_publish_topic));
+        String userId = "228";
+        return new ConnectionModel(
+                serverUri,
+                userId,
+                subTopic,
+                publishTopic
+
+
+        );
+    }
+
+    @NonNull
+    private String getStringFromPrefernce(Context context, String string) {
+        return PreferenceManager
+                .getDefaultSharedPreferences(context)
+                .getString(string, "");
     }
 
     @Override

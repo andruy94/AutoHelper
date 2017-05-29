@@ -93,9 +93,9 @@
     <string name="clean">Очистить</string>
     <string name="pref_header_general_open">Настройки для Открыть</string>
     <string name="pref_header_general_warn">Настройки для Предупредить</string>
-    <string name="open_key_sub_kanal">example_text</string>
+    <string name="open_key_sub_topic">example_text</string>
     <string name="open_key_web_adress">example_text1</string>
-    <string name="open_key_write_kanal">example_text2</string>
+    <string name="open_key_publish_topic">example_text2</string>
     <string name="warn_key_sub_kanal">warn_key_sub_kanal</string>
     <string name="warn_key_web_adress">warn_key_web_adress</string>
     <string name="warn_key_write_kanal">warn_key_write_kanal</string>

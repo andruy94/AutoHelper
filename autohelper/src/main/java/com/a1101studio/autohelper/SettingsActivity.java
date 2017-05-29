@@ -192,9 +192,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference(getActivity().getString(R.string.open_key_sub_kanal)));
+            bindPreferenceSummaryToValue(findPreference(getActivity().getString(R.string.open_key_sub_topic)));
             bindPreferenceSummaryToValue(findPreference(getActivity().getString(R.string.open_key_web_adress)));
-            bindPreferenceSummaryToValue(findPreference(getActivity().getString(R.string.open_key_write_kanal)));
+            bindPreferenceSummaryToValue(findPreference(getActivity().getString(R.string.open_key_publish_topic)));
 
         }
 
