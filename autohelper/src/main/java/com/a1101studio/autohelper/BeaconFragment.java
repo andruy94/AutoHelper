@@ -50,7 +50,7 @@ import static android.content.Context.LOCATION_SERVICE;
  * Use the {@link BeaconFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BeaconFragment extends Fragment {
+public class BeaconFragment extends Fragment implements OnMyLocationListener{
 
     MapController mMapController;
 
@@ -58,6 +58,7 @@ public class BeaconFragment extends Fragment {
     private ServerWorker serverWorker;
     @BindView(R.id.fab)
     FloatingActionButton fab;
+    private final int PERMISSIONS_CODE=109;
 
     public BeaconFragment() {
         // Required empty public constructor
@@ -109,6 +110,15 @@ public class BeaconFragment extends Fragment {
             mMapController = mapView.getMapController();
             // add listener
             mMapController.getOverlayManager().getMyLocation();
+            mapView.showBuiltInScreenButtons(true);
+
+            mMapController = mapView.getMapController();
+            // add listener
+            mMapController.getOverlayManager().getMyLocation().addMyLocationListener(this);
+
+
+            checkPermission();
+            mapView.getMapController().getOverlayManager().getMyLocation().setEnabled(true);
         }
     }
 
@@ -123,6 +133,46 @@ public class BeaconFragment extends Fragment {
         }).show();
     }
 
+
+    private void checkPermission() {
+        int permACL = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
+        int permAFL = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if (permACL != PackageManager.PERMISSION_GRANTED ||
+                permAFL != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_CODE);
+        }
+
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mMapController.getOverlayManager().getMyLocation().refreshPermission();
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
 
     private void connectToService(String autoNumber) {
         // if (serverWorker == null || !serverWorker.isConnected()) {
@@ -187,6 +237,11 @@ public class BeaconFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onMyLocationChange(MyLocationItem myLocationItem) {
+
     }
 
 
