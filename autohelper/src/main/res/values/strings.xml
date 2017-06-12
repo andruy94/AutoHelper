@@ -85,7 +85,7 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="web_adress">Сетевой адрес</string>
-    <string name="def_web_adress">tcp://iot.eclipse.org:1883</string>
+    <string name="def_web_adress">iot.eclipse.org:1883</string>
     <string name="def_subsrib_kanal">SHIPOV/AVTO/</string>
     <string name="sub_kanal">канал подписки по для теста</string>
     <string name="def_publish_adres">SHIPOV/AVTO/</string>
@@ -99,4 +99,6 @@
     <string name="warn_key_sub_kanal">warn_key_sub_kanal</string>
     <string name="warn_key_web_adress">warn_key_web_adress</string>
     <string name="warn_key_write_kanal">warn_key_write_kanal</string>
+    <string name="new_msg">Вам пришло новое сообщение</string>
+    <string name="get_number">!GETNOMER</string>
 </resources>

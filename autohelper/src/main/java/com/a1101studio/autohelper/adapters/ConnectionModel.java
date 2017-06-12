@@ -6,7 +6,7 @@ package com.a1101studio.autohelper.adapters;
 
 public class ConnectionModel {
     private String serverUri = "tcp://iot.eclipse.org:1883";
-    private String clientId = "ExampleAndroidClient228";
+    private String clientId = "228";
     private String subscriptionTopic = "test228";
     private String publishTopic = "test";
     private String publishMessage = "";

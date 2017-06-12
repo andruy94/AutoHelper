@@ -2,8 +2,11 @@ package com.a1101studio.autohelper;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,13 +22,12 @@ import android.widget.Toast;
 import com.a1101studio.autohelper.adapters.ConnectionModel;
 import com.a1101studio.autohelper.utils.ServerWorker;
 
-import org.eclipse.paho.client.mqttv3.MqttException;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 
+import static android.R.string.no;
 import static android.R.string.ok;
 
 
@@ -38,41 +40,28 @@ import static android.R.string.ok;
  * create an instance of this fragment.
  */
 public class OpenFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    public static  String msg="";
+
+    public static String msg = "";
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+
 
     private OnFragmentInteractionListener mListener;
     private ServerWorker serverWorker;
 
     @BindView(R.id.buttonOpen)
     Button buttonOpen;
-    @BindView(R.id.editText)
+    @BindView(R.id.etCarNumber)
     EditText editText;
+    private int delayMillis;
 
     public OpenFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment OpenFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static OpenFragment newInstance(String param1, String param2) {
         OpenFragment fragment = new OpenFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -80,10 +69,11 @@ public class OpenFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        connectToService();
+    }
+
+    private void connectToService() {
+        connectToService("");
     }
 
     @Override
@@ -99,6 +89,12 @@ public class OpenFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        serverWorker.close();
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -108,44 +104,52 @@ public class OpenFragment extends Fragment {
 
     @OnClick(R.id.buttonOpen)
     public void openMe() {
-            connectToService();
-        if (serverWorker.getMqttAndroidClient().isConnected()) {
-            editText.setHint(editText.getText().toString());
-
-            final String msgText = editText.getText().toString();
-            serverWorker.publishMessage(msgText);
-            editText.setText("");
-        } else {
-            try {
-                serverWorker.getMqttAndroidClient().disconnect();
-            } catch (MqttException|NullPointerException e) {
-                e.printStackTrace();
+        final String msgText = editText.getText().toString();
+        serverWorker.close();
+        connectToService(msgText);
+        delayMillis = 500;
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (serverWorker.isConnected()) {
+                    editText.setHint(editText.getText().toString());
+                    serverWorker.publishMessage(getString(R.string.get_number));
+                    editText.setText("");
+                } else {
+                    Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+                }
             }
-            connectToService();
-            Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
-        }
+        }, delayMillis);
     }
 
-    private void connectToService() {
-        if (serverWorker == null || !serverWorker.getMqttAndroidClient().isConnected()) {
-            ConnectionModel connectionModel = createConnectionModel(getContext());
-
-            serverWorker = new ServerWorker(getContext(),connectionModel , new ServerWorker.CallBackMessage() {
+    private void connectToService(String autoNumber) {
+       // if (serverWorker == null || !serverWorker.isConnected()) {
+            final ConnectionModel connectionModel = createConnectionModel(getContext());
+            connectionModel.setPublishTopic(connectionModel.getPublishTopic()+autoNumber);
+            serverWorker = new ServerWorker(getContext(), connectionModel, new ServerWorker.CallBackMessage() {
                 @Override
-                public void onMessageArrive(String s1, String s2) {
-                    msg += "{topic= " + s1 + "msg=" + s2 + '}' + '\n';
+                public void onMessageArrive(String s1, final String s2) {
+                    new AlertDialog.Builder(getContext()).setTitle("Позвонить?").setMessage("Номер телефона: "+s2).setPositiveButton(ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent intent = new Intent(Intent.ACTION_DIAL);
+                            intent.setData(Uri.parse("tel:+7"+s2));
+                            startActivity(intent);
+                        }
+                    }).setNegativeButton(no,null).show();
+
                 }
             });
-        }
+       // }
     }
 
     @OnLongClick(R.id.buttonOpen)
-    public boolean onLong(){
-        AlertDialog.Builder builder=new AlertDialog.Builder(getActivity()).setMessage(msg).setPositiveButton(ok,null);
+    public boolean onLong() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()).setMessage(msg).setPositiveButton(ok, null);
         builder.setNegativeButton(R.string.clean, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                msg="";
+                msg = "";
             }
         });
         builder.show();
@@ -168,7 +172,7 @@ public class OpenFragment extends Fragment {
         String serverUri = getStringFromPrefernce(context, context.getString(R.string.open_key_web_adress));
         String subTopic = getStringFromPrefernce(context, context.getString(R.string.open_key_sub_topic));
         String publishTopic = getStringFromPrefernce(context, context.getString(R.string.open_key_publish_topic));
-        String userId = "228";
+        String userId = Build.SERIAL;
         return new ConnectionModel(
                 serverUri,
                 userId,
@@ -185,6 +189,8 @@ public class OpenFragment extends Fragment {
                 .getDefaultSharedPreferences(context)
                 .getString(string, "");
     }
+
+
 
     @Override
     public void onDetach() {

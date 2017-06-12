@@ -11,52 +11,76 @@
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="384dp"
-        android:layout_height="21dp"
+        android:layout_width="0dp"
+        android:layout_height="25dp"
         android:text="Введите номер автомибиля"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="0dp"
-        android:id="@+id/textView" />
+        android:id="@+id/textView"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
 
     <EditText
         android:lines="1"
-        android:layout_width="384dp"
-        android:layout_height="54dp"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
         android:inputType="textPersonName"
         android:hint="EX101S777"
         android:ems="10"
-        android:id="@+id/editText"
+        android:id="@+id/etCarNumber"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintLeft_toLeftOf="@+id/textView" />
+        app:layout_constraintLeft_toLeftOf="@+id/textView"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="@+id/textView"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
 
 
     <Button
         android:text="Я вас запер"
-        android:id="@+id/button"
-        app:layout_constraintTop_toBottomOf="@+id/multiAutoCompleteTextView"
-        app:layout_constraintRight_toRightOf="@+id/multiAutoCompleteTextView"
+        android:id="@+id/buttonWarn"
+        app:layout_constraintTop_toBottomOf="@+id/etMessage"
+        app:layout_constraintRight_toRightOf="@+id/etMessage"
         style="@style/button"
-        android:layout_height="100dp"
-        android:layout_width="100dp"
-        app:layout_constraintLeft_toLeftOf="@+id/multiAutoCompleteTextView" />
+        android:layout_height="102dp"
+        android:layout_width="102dp"
+        app:layout_constraintLeft_toLeftOf="@+id/etMessage"
+        android:layout_marginTop="0dp"
+        app:layout_constraintHorizontal_bias="0.494" />
 
-    <MultiAutoCompleteTextView
+    <EditText
         android:minLines="5"
         android:text=""
         android:layout_width="match_parent"
-        android:layout_height="78dp"
-        android:id="@+id/multiAutoCompleteTextView"
+        android:layout_height="80dp"
+        android:id="@+id/etMessage"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
         app:layout_constraintLeft_toLeftOf="@+id/textView2"
-        app:layout_constraintRight_toRightOf="@+id/textView2" />
+        app:layout_constraintRight_toRightOf="@+id/textView2"
+        app:layout_constraintHorizontal_bias="0.158"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
 
     <TextView
         android:text="Введите сообщение"
-        android:layout_width="384dp"
-        android:layout_height="25dp"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
         android:id="@+id/textView2"
-        app:layout_constraintTop_toBottomOf="@+id/editText"
-        app:layout_constraintLeft_toLeftOf="@+id/editText" />
+        app:layout_constraintTop_toBottomOf="@+id/etCarNumber"
+        app:layout_constraintLeft_toLeftOf="@+id/etCarNumber"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="@+id/etCarNumber"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
 
 
 </android.support.constraint.ConstraintLayout>

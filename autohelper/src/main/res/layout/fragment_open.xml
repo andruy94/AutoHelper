@@ -25,16 +25,16 @@
             android:inputType="textPersonName"
             android:hint="EX101S777"
             android:ems="10"
-            android:id="@+id/editText"
+            android:id="@+id/etCarNumber"
             app:layout_constraintTop_toBottomOf="@+id/textView"
             app:layout_constraintLeft_toLeftOf="@+id/textView" />
 
         <Button
             android:text="Выпусти меня"
             android:id="@+id/buttonOpen"
-            app:layout_constraintLeft_toLeftOf="@+id/editText"
-            app:layout_constraintTop_toBottomOf="@+id/editText"
-            app:layout_constraintRight_toRightOf="@+id/editText"
+            app:layout_constraintLeft_toLeftOf="@+id/etCarNumber"
+            app:layout_constraintTop_toBottomOf="@+id/etCarNumber"
+            app:layout_constraintRight_toRightOf="@+id/etCarNumber"
             style="@style/button" />
 
 
