@@ -41,11 +41,11 @@ public class ServerWorker {
     public void close() {
         mqttAndroidClient.close();
         mqttAndroidClient.unregisterResources();
-        try {
+        /*try {
             mqttAndroidClient.disconnect();
         } catch (MqttException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public boolean isConnected() {

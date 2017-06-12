@@ -69,7 +69,7 @@ public class OpenFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        connectToService();
+
     }
 
     private void connectToService() {
@@ -85,8 +85,9 @@ public class OpenFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        ButterKnife.bind(this, view);
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
+        connectToService();
     }
 
     @Override

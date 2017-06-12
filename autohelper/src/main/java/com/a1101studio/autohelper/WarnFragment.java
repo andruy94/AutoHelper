@@ -81,11 +81,12 @@ public class WarnFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        connectToService("");
     }
 
     @OnClick(R.id.buttonWarn)
     public void warnPlz() {
-        String autoNumber = etCarNumber.getText().toString();
+        final String autoNumber = etCarNumber.getText().toString();
         if (serverWorker != null)
             serverWorker.close();
         connectToService(autoNumber);
@@ -96,7 +97,7 @@ public class WarnFragment extends Fragment {
                     serverWorker.publishMessage(etMsg.getText().toString());
                     etMsg.setHint(etMsg.getText().toString());
                     etMsg.setText("");
-                    etCarNumber.setHint(etCarNumber.getText().toString());
+                    etCarNumber.setHint(autoNumber);
                     etCarNumber.setText("");
                 } else {
                     Toast.makeText(getContext(), "Error", Toast.LENGTH_LONG).show();
